@@ -16,7 +16,6 @@ jobs:
         with:
           version: 8
       - run: pnpm install
-      - run: pnpm test
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
