@@ -1,4 +1,4 @@
-# TypeScript Web Utilities
+# Svarog Toolbox
 
 [![npm version](https://badge.fury.io/js/svarog.svg)](https://badge.fury.io/js/svarog)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
