@@ -1,58 +1,197 @@
-# create-svelte
+# TypeScript Web Utilities
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+[![npm version](https://badge.fury.io/js/svarog.svg)](https://badge.fury.io/js/svarog)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+A comprehensive collection of TypeScript utilities for modern web development, focusing on API interactions, authentication, form handling, validation, and more. Designed to streamline development workflows with well-documented, type-safe functions.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Installation
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm install svarog
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
+or
 
 ```bash
-npm run package
+pnpm add svarog
 ```
 
-To create a production version of your showcase app:
+## Features
 
-```bash
-npm run build
+- 🔄 **API Utilities**: Standardized API response handling with type-safe results
+- 🔐 **Authentication**: JWT validation and token refresh mechanisms
+- 🍪 **Cookie Management**: Utilities for handling HTTP cookies
+- 📝 **Form Handling**: Enhanced form processing with validation and submission handling
+- ✅ **Validation**: Comprehensive form validation functions
+- 📄 **Markdown Processing**: Powerful markdown parsing with customizable options
+- 🕒 **Date & Time Formatting**: Flexible date/time display options
+- 🔄 **Turnstile Integration**: Cloudflare Turnstile verification support
+
+## Usage Examples
+
+### API Response Handling
+
+```typescript
+import { handleApiResponse, isSuccessResponse } from 'svarog/api';
+
+// Get user profile
+async function fetchUserProfile(userId: string) {
+	const response = await fetch(`/api/users/${userId}`);
+	const result = await handleApiResponse<UserProfile>(response);
+
+	if (isSuccessResponse(result)) {
+		return result.data;
+	} else {
+		console.error(`Error ${result.status}: ${result.message}`);
+		return null;
+	}
+}
 ```
 
-You can preview the production build with `npm run preview`.
+### Form Validation
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```typescript
+import {
+	validateEmail,
+	validatePassword,
+	validateMinLength,
+	composeValidators
+} from 'svarog/validation';
 
-## Publishing
+// Create a composite validator
+const validateUsername = composeValidators(validateMinLength(3), (value) =>
+	!/^[a-zA-Z0-9_]+$/.test(value)
+		? 'Username can only contain letters, numbers, and underscores'
+		: null
+);
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+// Use in form submit handler
+function handleSubmit(event) {
+	const email = emailInput.value;
+	const password = passwordInput.value;
 
-To publish your library to [npm](https://www.npmjs.com):
+	const emailError = validateEmail(email);
+	const passwordError = validatePassword(password);
 
-```bash
-npm publish
+	if (emailError || passwordError) {
+		// Handle validation errors
+		return;
+	}
+
+	// Proceed with form submission
+}
 ```
+
+### Enhanced Form Handling in SvelteKit
+
+```typescript
+import { enhanceForm } from 'svarog/form';
+
+// In your Svelte component
+const enhance = enhanceForm({
+  messages: {
+    success: 'Your profile was updated successfully',
+    defaultError: 'Could not update profile'
+  },
+  isLoadingStore: loadingStore,
+  notificationStore: toastStore
+});
+
+// Use in your form
+<form method="POST" use:enhance>
+  <!-- form fields -->
+</form>
+```
+
+### Date Formatting
+
+```typescript
+import { formatDate, formatDateTime, formatRelativeTime } from 'svarog/time';
+
+// Format a date with custom options
+formatDate(new Date(), {
+	year: true,
+	month: 'long',
+	day: true
+}); // "March 6, 2025"
+
+// Format relative time
+formatRelativeTime(new Date(Date.now() - 3600000)); // "1 hour ago"
+```
+
+### Markdown Processing
+
+```typescript
+import { parseMarkdown, extractFrontmatter } from 'svarog/markdown';
+
+// Parse markdown with custom options
+const html = await parseMarkdown(markdownContent, {
+	gfm: true,
+	highlight: true,
+	toc: true,
+	headingAnchors: true
+});
+
+// Extract and use frontmatter
+const [metadata, content] = extractFrontmatter(markdownWithFrontmatter);
+```
+
+### JWT Authentication
+
+```typescript
+import { getUserFromToken, requireAuth } from 'svarog/token';
+
+// In a SvelteKit load function
+export async function load({ event }) {
+	// Get authenticated user or null
+	const user = await getUserFromToken(event);
+
+	return {
+		user
+	};
+}
+
+// For protected routes
+export async function load({ event }) {
+	// This will redirect to login if not authenticated
+	const user = await requireAuth(event);
+
+	return {
+		user
+	};
+}
+```
+
+## API Reference
+
+The package is organized into several modules:
+
+- **api**: Type-safe API response handling utilities
+- **cookies**: HTTP cookie management functions
+- **form**: Enhanced form handling for SvelteKit
+- **markdown**: Markdown parsing and processing tools
+- **time**: Date and time formatting functions
+- **token**: JWT authentication utilities
+- **turnstile**: Cloudflare Turnstile verification
+- **validation**: Form validation functions
+
+Each module is thoroughly documented with JSDoc comments. For detailed API reference, please refer to the source code or the generated documentation.
+
+## TypeScript Support
+
+This package is written in TypeScript and includes comprehensive type definitions for all exported functions and interfaces.
+
+## License
+
+MIT
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request

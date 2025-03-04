@@ -60,5 +60,26 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"dependencies": {
+		"gray-matter": "^4.0.3",
+		"hastscript": "^9.0.1",
+		"jose": "^6.0.8",
+		"rehype": "^13.0.2",
+		"rehype-autolink-headings": "^7.1.0",
+		"rehype-format": "^5.0.1",
+		"rehype-highlight": "^7.0.2",
+		"rehype-sanitize": "^6.0.0",
+		"rehype-slug": "^6.0.0",
+		"rehype-stringify": "^10.0.1",
+		"remark": "^15.0.1",
+		"remark-emoji": "^5.0.1",
+		"remark-gfm": "^4.0.1",
+		"remark-math": "^6.0.0",
+		"remark-parse": "^11.0.0",
+		"remark-rehype": "^11.1.1",
+		"remark-toc": "^9.0.0",
+		"unified": "^11.0.5",
+		"unist-util-visit": "^5.0.0"
 	}
 }
