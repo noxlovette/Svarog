@@ -27,6 +27,7 @@ pnpm add svarog
 - 📄 **Markdown Processing**: Powerful markdown parsing with customizable options
 - 🕒 **Date & Time Formatting**: Flexible date/time display options
 - 🔄 **Turnstile Integration**: Cloudflare Turnstile verification support
+- 🔍 **SEO Component**: Comprehensive SEO metadata management for Svelte applications
 
 ## Usage Examples
 
@@ -163,6 +164,62 @@ export async function load({ event }) {
 }
 ```
 
+### SEO Component for Svelte
+
+```svelte
+<script>
+	import SEO from 'svarog/seo';
+</script>
+
+<SEO
+	title="Dashboard | Svarog"
+	description="View your application data and analytics."
+	keywords="dashboard, analytics, data visualization"
+/>
+```
+
+With advanced configuration:
+
+```svelte
+<SEO
+	title="Project Management | Svarog"
+	description="Manage your projects and track progress efficiently."
+	canonical="https://example.com/projects"
+	twitterSite="svarogapp"
+	og={{
+		type: 'article',
+		locale: 'en_US'
+	}}
+	schema={{
+		type: 'WebPage',
+		publishDate: '2025-01-15',
+		authorName: 'Your Organization',
+		authorUrl: 'https://example.com'
+	}}
+/>
+```
+
+Create reusable SEO configurations:
+
+```typescript
+import { createSEOConfig } from 'svarog/seo';
+
+// In a shared config file
+export const seoConfig = createSEOConfig({
+	siteName: 'Svarog',
+	baseUrl: 'https://example.com',
+	defaultImage: 'https://example.com/images/og.png'
+});
+
+// In a page component
+import { seoConfig } from '$lib/config';
+
+const pageSEO = seoConfig({
+	title: 'Dashboard',
+	description: 'View your application data'
+});
+```
+
 ## API Reference
 
 The package is organized into several modules:
@@ -175,8 +232,26 @@ The package is organized into several modules:
 - **token**: JWT authentication utilities
 - **turnstile**: Cloudflare Turnstile verification
 - **validation**: Form validation functions
+- **seo**: SEO metadata component for Svelte applications
 
 Each module is thoroughly documented with JSDoc comments. For detailed API reference, please refer to the source code or the generated documentation.
+
+### SEO Component Props
+
+| Prop          | Type     | Default                                       | Description                                 |
+| ------------- | -------- | --------------------------------------------- | ------------------------------------------- |
+| `title`       | `string` | `"Svarog"`                                    | Page title (displayed in browser tab)       |
+| `description` | `string` | `"A customizable web application framework."` | Page description for search engines         |
+| `keywords`    | `string` | `"web, application, framework, ..."`          | Keywords for search engines                 |
+| `robots`      | `string` | `"index, follow"`                             | Robots directive for search engines         |
+| `canonical`   | `string` | `undefined`                                   | Canonical URL for the page                  |
+| `ogTitle`     | `string` | `title`                                       | Open Graph title (for social media sharing) |
+| `ogUrl`       | `string` | `"https://example.com"`                       | URL for the Open Graph object               |
+| `ogImage`     | `string` | `"https://example.com/images/og.png"`         | Image URL for social media shares           |
+| `twitterCard` | `string` | `"summary_large_image"`                       | Twitter card type                           |
+| `twitterSite` | `string` | `undefined`                                   | Twitter username (without @)                |
+| `og`          | `object` | `{}`                                          | Open Graph configuration object             |
+| `schema`      | `object` | `{}`                                          | Schema.org structured data configuration    |
 
 ## TypeScript Support
 

@@ -1,6 +1,6 @@
 {
 	"name": "@noxlovette/svarog",
-	"version": "0.0.1",
+	"version": "0.0.4",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -27,36 +27,33 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
-		},
-		"./README.md": "./README.md",
-		"./LICENSE": "./LICENSE"
+		}
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^1.2.5",
-		"@eslint/js": "^9.18.0",
+		"@eslint/compat": "^1.2.7",
+		"@eslint/js": "^9.21.0",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/kit": "^2.16.0",
-		"@sveltejs/package": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^5.0.0",
-		"@tailwindcss/forms": "^0.5.9",
-		"@tailwindcss/typography": "^0.5.15",
-		"@tailwindcss/vite": "^4.0.0",
-		"eslint": "^9.18.0",
-		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^3.0.0",
+		"@sveltejs/package": "^2.3.10",
+		"@sveltejs/vite-plugin-svelte": "^5.0.3",
+		"@tailwindcss/forms": "^0.5.10",
+		"@tailwindcss/typography": "^0.5.16",
+		"@tailwindcss/vite": "^4.0.10",
+		"eslint": "^9.21.0",
+		"eslint-config-prettier": "^10.0.2",
+		"eslint-plugin-svelte": "^3.0.3",
 		"globals": "^16.0.0",
-		"prettier": "^3.4.2",
+		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.3.3",
-		"publint": "^0.3.2",
-		"svelte": "^5.0.0",
-		"svelte-check": "^4.0.0",
-		"tailwindcss": "^4.0.0",
-		"typescript": "^5.0.0",
-		"typescript-eslint": "^8.20.0",
-		"vite": "^6.0.0"
+		"publint": "^0.3.8",
+		"svelte": "^5.22.4",
+		"svelte-check": "^4.1.4",
+		"typescript": "^5.8.2",
+		"typescript-eslint": "^8.26.0",
+		"vite": "^6.2.0"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
@@ -64,6 +61,7 @@
 		]
 	},
 	"dependencies": {
+		"@sveltejs/kit": "^2.18.0",
 		"gray-matter": "^4.0.3",
 		"hastscript": "^9.0.1",
 		"jose": "^6.0.8",
@@ -81,8 +79,8 @@
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.1",
 		"remark-toc": "^9.0.0",
+		"tailwindcss": "^4.0.10",
 		"unified": "^11.0.5",
-		"unist-util-visit": "^5.0.0",
-		"@sveltejs/kit": "^2.16.0"
+		"unist-util-visit": "^5.0.0"
 	}
 }
