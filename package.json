@@ -1,6 +1,6 @@
 {
 	"name": "@noxlovette/svarog",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -35,7 +35,7 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.2.7",
 		"@eslint/js": "^9.21.0",
-		"@sveltejs/adapter-auto": "^4.0.0",
+		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/package": "^2.3.10",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",

@@ -1,19 +1,22 @@
-import { env } from '$env/dynamic/private';
 import { importSPKI, jwtVerify } from 'jose';
 import { redirect } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
+
+interface AuthConfig {
+	spki: string;
+	alg: string;
+}
 
 /**
  * Validates a JWT access token against the public key
  *
  * @param jwt The JWT token to validate
+ * @param config Auth configuration containing spki and algorithm
  * @returns The decoded payload if valid
  * @throws Error if token is invalid or about to expire
  */
-export async function ValidateAccess(jwt: string) {
-	const spki = env.spki || '';
-	const alg = env.alg || 'RS256';
-	const publicKey = await importSPKI(spki, alg);
+export async function ValidateAccess(jwt: string, config: AuthConfig) {
+	const publicKey = await importSPKI(config.spki, config.alg);
 
 	const { payload } = await jwtVerify(jwt, publicKey, {
 		issuer: 'auth:auth'
@@ -42,11 +45,16 @@ const refreshingStates = new Map<string, boolean>();
  * Handles token refresh when the access token is invalid or expired
  *
  * @param event The SvelteKit request event
+ * @param config Auth configuration containing spki and algorithm
  * @param sessionId A unique identifier for the current session (to prevent race conditions)
  * @returns The validated user payload or null if refresh fails
  * @throws Redirects to login if refresh fails
  */
-export async function handleTokenRefresh(event: RequestEvent, sessionId: string = 'default') {
+export async function handleTokenRefresh(
+	event: RequestEvent,
+	config: AuthConfig,
+	sessionId: string = 'default'
+) {
 	// Check if already refreshing for this session
 	if (refreshingStates.get(sessionId)) {
 		// Wait for the other refresh to complete (with timeout)
@@ -60,7 +68,7 @@ export async function handleTokenRefresh(event: RequestEvent, sessionId: string 
 		const accessToken = event.cookies.get('accessToken');
 		if (accessToken) {
 			try {
-				return await ValidateAccess(accessToken);
+				return await ValidateAccess(accessToken, config);
 			} catch (error) {
 				// Token still invalid after waiting, continue with refresh
 			}
@@ -92,7 +100,7 @@ export async function handleTokenRefresh(event: RequestEvent, sessionId: string 
 			throw new Error('No new access token provided after refresh');
 		}
 
-		return await ValidateAccess(newAccessToken);
+		return await ValidateAccess(newAccessToken, config);
 	} catch (error) {
 		console.error('Token refresh failed:', error);
 		throw redirect(302, '/auth/login');
@@ -106,10 +114,11 @@ export async function handleTokenRefresh(event: RequestEvent, sessionId: string 
  * Gets the authenticated user from the access token or refresh token
  *
  * @param event The SvelteKit request event
+ * @param config Auth configuration containing spki and algorithm
  * @returns The authenticated user payload or null if no valid token
  * @throws Redirects to login if refresh fails
  */
-export async function getUserFromToken(event: RequestEvent): Promise<any> {
+export async function getUserFromToken(event: RequestEvent, config: AuthConfig): Promise<any> {
 	const accessToken = event.cookies.get('accessToken');
 
 	// Generate a session ID from the request for race condition prevention
@@ -119,16 +128,16 @@ export async function getUserFromToken(event: RequestEvent): Promise<any> {
 	if (accessToken) {
 		try {
 			// Try to validate the current access token
-			return await ValidateAccess(accessToken);
+			return await ValidateAccess(accessToken, config);
 		} catch (error) {
 			// Token is invalid, try refresh if we have a refresh token
 			if (event.cookies.get('refreshToken')) {
-				return await handleTokenRefresh(event, sessionId);
+				return await handleTokenRefresh(event, config, sessionId);
 			}
 		}
 	} else if (event.cookies.get('refreshToken')) {
 		// No access token but we have a refresh token
-		return await handleTokenRefresh(event, sessionId);
+		return await handleTokenRefresh(event, config, sessionId);
 	}
 
 	// No valid tokens
@@ -139,11 +148,12 @@ export async function getUserFromToken(event: RequestEvent): Promise<any> {
  * Checks if the current request has a valid authentication token
  *
  * @param event The SvelteKit request event
+ * @param config Auth configuration containing spki and algorithm
  * @returns True if the user is authenticated
  */
-export async function isAuthenticated(event: RequestEvent): Promise<boolean> {
+export async function isAuthenticated(event: RequestEvent, config: AuthConfig): Promise<boolean> {
 	try {
-		const user = await getUserFromToken(event);
+		const user = await getUserFromToken(event, config);
 		return !!user;
 	} catch (error) {
 		return false;
@@ -154,11 +164,12 @@ export async function isAuthenticated(event: RequestEvent): Promise<boolean> {
  * Requires authentication for a route, redirecting to login if not authenticated
  *
  * @param event The SvelteKit request event
+ * @param config Auth configuration containing spki and algorithm
  * @returns The authenticated user payload
  * @throws Redirects to login if not authenticated
  */
-export async function requireAuth(event: RequestEvent): Promise<any> {
-	const user = await getUserFromToken(event);
+export async function requireAuth(event: RequestEvent, config: AuthConfig): Promise<any> {
+	const user = await getUserFromToken(event, config);
 
 	if (!user) {
 		const returnUrl = event.url.pathname + event.url.search;
