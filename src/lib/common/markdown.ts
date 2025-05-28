@@ -1,6 +1,7 @@
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeFormat from 'rehype-format';
-import rehypeHighlight from 'rehype-highlight';
+
+import rehypePrism from 'rehype-prism-plus';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
@@ -194,7 +195,15 @@ export async function parseMarkdown(
 	// Add syntax highlighting if enabled
 	if (opts.highlight) {
 		// @ts-ignore
-		processor = processor.use(rehypeHighlight, { ignoreMissing: true });
+		processor = processor.use(rehypePrism, {
+			ignoreMissing: true,
+			showLineNumbers: true, // optional
+			alias: {
+				// optional language aliases
+				js: 'javascript',
+				ts: 'typescript'
+			}
+		});
 	}
 
 	// Add sanitization based on security level
